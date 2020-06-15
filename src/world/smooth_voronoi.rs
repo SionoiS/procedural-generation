@@ -1,18 +1,21 @@
-use nalgebra::geometry::Point3;
+use crate::world::hash_fonctions;
+use nalgebra::{Point3, Vector3};
 
-pub fn evaluate(coordinates: Point3<f64>, scale: f64, hardness: f64) -> f64 {
+//https://www.iquilezles.org/www/articles/smoothvoronoi/smoothvoronoi.htm
+
+pub fn smooth_voronoi_3d(coordinates: Point3<f64>, scale: f64, hardness: f64) -> f64 {
     let coordinates = coordinates * scale;
 
-    let fract = Point3::new(
-        coordinates.x % 1.0,
-        coordinates.y % 1.0,
-        coordinates.z % 1.0,
+    let integral = Point3::new(
+        coordinates.x.floor(),
+        coordinates.y.floor(),
+        coordinates.z.floor(),
     );
 
-    let integral = Point3::new(
-        coordinates.x - fract.x,
-        coordinates.y - fract.y,
-        coordinates.z - fract.z,
+    let fract = Point3::new(
+        coordinates.x.fract(),
+        coordinates.y.fract(),
+        coordinates.z.fract(),
     );
 
     let mut smooth_distance = 1.0;
@@ -25,9 +28,13 @@ pub fn evaluate(coordinates: Point3<f64>, scale: f64, hardness: f64) -> f64 {
                     integral.z + z as f64,
                 );
 
-                //TODO hash functions
-                unimplemented!();
-                let distance = 0.0;
+                let result = Vector3::new(
+                    hash_fonctions::coordinates_hash_x(coords) - fract.x + x as f64,
+                    hash_fonctions::coordinates_hash_y(coords) - fract.y + y as f64,
+                    hash_fonctions::coordinates_hash_z(coords) - fract.z + z as f64,
+                );
+
+                let distance = result.dot(&result).sqrt();
 
                 smooth_distance += (-hardness * distance).exp()
             }
