@@ -1,7 +1,7 @@
 use nalgebra::geometry::Point3;
 
-pub fn evaluate(mut coordinates: Point3<f32>, scale: f32, hardness: f32) -> f32 {
-    coordinates *= scale;
+pub fn evaluate(coordinates: Point3<f64>, scale: f64, hardness: f64) -> f64 {
+    let coordinates = coordinates * scale;
 
     let fract = Point3::new(
         coordinates.x % 1.0,
@@ -20,13 +20,13 @@ pub fn evaluate(mut coordinates: Point3<f32>, scale: f32, hardness: f32) -> f32 
         for y in -2..3 {
             for x in -2..3 {
                 let coords = Point3::new(
-                    integral.x + x as f32,
-                    integral.y + y as f32,
-                    integral.z + z as f32,
+                    integral.x + x as f64,
+                    integral.y + y as f64,
+                    integral.z + z as f64,
                 );
 
                 //TODO hash functions
-
+                unimplemented!();
                 let distance = 0.0;
 
                 smooth_distance += (-hardness * distance).exp()

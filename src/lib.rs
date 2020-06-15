@@ -1,2 +1,2 @@
-pub mod resources;
-pub mod world;
+mod resources;
+mod world;

@@ -20,7 +20,7 @@ pub fn get_quantity(
         //TODO find better way to merge the two 128bits into 256 for seeding
         let result = [asteroid_id.to_be_bytes(), player_id.to_be_bytes()].concat();
 
-        let mut seed: [u8; 32] = [0u8; 32];
+        let mut seed = [0u8; 32];
 
         seed.copy_from_slice(&result);
 
