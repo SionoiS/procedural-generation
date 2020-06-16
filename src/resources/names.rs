@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use rand::Rng;
 use rand::SeedableRng;
 use rand_xoshiro::Xoshiro128StarStar;
@@ -26,7 +28,7 @@ const NM5: [&str; 16] = [
 
 const NM6: [&str; 9] = ["ium", "ese", "alt", "um", "ian", "il", "ine", "yx", "ite"];
 
-pub fn long_ore_name(ore_id: u128) -> String {
+pub fn ore_long(ore_id: u128) -> String {
     let mut rng = Xoshiro128StarStar::from_seed(ore_id.to_be_bytes());
 
     let mut name = String::from(NM1[rng.gen_range(0, NM1.len())]);
@@ -39,7 +41,7 @@ pub fn long_ore_name(ore_id: u128) -> String {
     name
 }
 
-pub fn medium_ore_name(ore_id: u128) -> String {
+pub fn ore_medium(ore_id: u128) -> String {
     let mut rng = Xoshiro128StarStar::from_seed(ore_id.to_be_bytes());
 
     let mut name = String::from(NM1[rng.gen_range(0, NM1.len())]);
@@ -51,7 +53,7 @@ pub fn medium_ore_name(ore_id: u128) -> String {
     name
 }
 
-pub fn short_ore_name(ore_id: u128) -> String {
+pub fn ore_short(ore_id: u128) -> String {
     let mut rng = Xoshiro128StarStar::from_seed(ore_id.to_be_bytes());
 
     let mut name = String::from(NM3[rng.gen_range(0, NM3.len())]);
@@ -73,7 +75,7 @@ mod tests {
         let mut rng = Xoshiro128StarStar::from_entropy();
 
         for _ in 0..10 {
-            let name = long_ore_name(rng.gen());
+            let name = ore_long(rng.gen());
 
             println!("{}", name);
         }
@@ -84,7 +86,7 @@ mod tests {
         let mut rng = Xoshiro128StarStar::from_entropy();
 
         for _ in 0..10 {
-            let name = medium_ore_name(rng.gen());
+            let name = ore_medium(rng.gen());
 
             println!("{}", name);
         }
@@ -95,7 +97,7 @@ mod tests {
         let mut rng = Xoshiro128StarStar::from_entropy();
 
         for _ in 0..10 {
-            let name = short_ore_name(rng.gen());
+            let name = ore_short(rng.gen());
 
             println!("{}", name);
         }

@@ -1,6 +1,8 @@
+#![allow(dead_code)]
+
 use nalgebra::Point3;
 
-//TODO find better coordinates hash
+//TODO find better coordinates hashing functions
 
 pub fn coordinates_hash_x(position: Point3<f64>) -> f64 {
     (((position.x * 11.4 * 5.0) + (position.y * 6.5 * 11.0) + (position.z * 223.5 * 7.0)).sin()
@@ -25,14 +27,13 @@ pub fn coordinates_hash_fibonnaci(position: Point3<f64>) -> u64 {
         .wrapping_mul(FIBONNACI_MAGIC_NUMBER_64BIT)
 }
 
-//Great to map large values to smaller ones!
 //Phi = (1 + Math.Sqrt(5)) / 2;
 //reciprocalOfPhi = (Math.Sqrt(5) - 1) / 2;
 const FIBONNACI_MAGIC_NUMBER_16BIT: u16 = 40503; //reciprocalOfPhi * 2^16
 const FIBONNACI_MAGIC_NUMBER_32BIT: u32 = 2654435769; //reciprocalOfPhi * 2^32
 const FIBONNACI_MAGIC_NUMBER_64BIT: u64 = 11400714819323198485; //reciprocalOfPhi * 2^64
 
-//TODO make this generic!
+//Great to map large values to smaller ones!
 
 pub fn fibonacci_hash_32_bit(input: u64) -> u32 {
     (input.wrapping_mul(FIBONNACI_MAGIC_NUMBER_64BIT) >> 32) as u32

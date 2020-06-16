@@ -1,4 +1,6 @@
-use crate::world::hash_fonctions;
+#![allow(dead_code)]
+
+use crate::noise::hash_fonctions;
 use nalgebra::{Point3, Vector3};
 
 //https://www.iquilezles.org/www/articles/smoothvoronoi/smoothvoronoi.htm
