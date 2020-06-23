@@ -11,12 +11,12 @@ use rand_xoshiro::Xoshiro256StarStar;
 //Player will probably seek highter tier.
 
 pub fn try_generate(
-    sample: f32,
+    sample: f64,
     player_id: u128,
     asteroid_id: u128,
     tier: u8,
     false_neg_rate: u32,
-    efficiency: f32,
+    efficiency: f64,
 ) -> Option<u32> {
     let mut rng = {
         //TODO find better way to merge the two 128bits into 256 for seeding
@@ -73,17 +73,17 @@ pub fn try_generate(
         return None;
     }
 
-    Some((quantity as f32 * (1.0 + (efficiency / 100.0))) as u32)
+    Some((quantity as f64 * (1.0 + (efficiency / 100.0))) as u32)
 }
 
-const MAX_QUANTITY_EXP: f32 = 9.0;
+const MAX_QUANTITY_EXP: f64 = 9.0;
 
-fn get_quantity_from_sample(sample: f32) -> u32 {
-    10.0f32.powf(MAX_QUANTITY_EXP * normalize_sample(sample)) as u32
+fn get_quantity_from_sample(sample: f64) -> u32 {
+    10.0f64.powf(MAX_QUANTITY_EXP * normalize_sample(sample)) as u32
 }
 
-/// Scale -100<=f32<=100 to 0<=f32<=1.0
-fn normalize_sample(mut sample: f32) -> f32 {
+/// Scale -100<=f64<=100 to 0<=f64<=1.0
+fn normalize_sample(mut sample: f64) -> f64 {
     sample += 100.0; // 0 @ +200
     sample /= 200.0; // 0 @ +1
 
@@ -96,7 +96,7 @@ fn normalize_sample(mut sample: f32) -> f32 {
     sample
 }
 
-fn get_tier(mut sample: f32) -> u8 {
+pub fn get_tier(mut sample: f64) -> u8 {
     sample = normalize_sample(sample);
     sample *= MAX_QUANTITY_EXP;
 

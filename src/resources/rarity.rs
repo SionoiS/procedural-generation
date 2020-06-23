@@ -1,10 +1,12 @@
 #![allow(dead_code)]
 
 use crate::noise::simplex;
+use nalgebra::Point3;
 use nalgebra::{Point4, Vector3};
 
 pub fn get_samples(
-    space_time: Point4<f64>,
+    position: Point3<f64>,
+    time: u64,
     scales: Vector3<f64>,
     frequencies: Vector3<f64>,
     amplitudes: Vector3<f64>,
@@ -12,24 +14,24 @@ pub fn get_samples(
     seed: [u8; 512],
 ) -> f64 {
     let space_time_x = Point4::new(
-        space_time.x * scales.x,
-        space_time.y * scales.x,
-        space_time.z * scales.x,
-        space_time.w * frequencies.x,
+        position.x * scales.x,
+        position.y * scales.x,
+        position.z * scales.x,
+        time as f64 * frequencies.x,
     );
 
     let space_time_y = Point4::new(
-        space_time.x * scales.y,
-        space_time.y * scales.y,
-        space_time.z * scales.y,
-        space_time.w * frequencies.y,
+        position.x * scales.y,
+        position.y * scales.y,
+        position.z * scales.y,
+        time as f64 * frequencies.y,
     );
 
     let space_time_z = Point4::new(
-        space_time.x * scales.z,
-        space_time.y * scales.z,
-        space_time.z * scales.z,
-        space_time.w * frequencies.z,
+        position.x * scales.z,
+        position.y * scales.z,
+        position.z * scales.z,
+        time as f64 * frequencies.z,
     );
 
     let (sample_x, _) = simplex::with_derivatives_4d(space_time_x, seed);
