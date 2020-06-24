@@ -23,7 +23,7 @@
 use nalgebra::{Point3, Point4};
 use nalgebra::{Vector3, Vector4};
 
-pub fn with_derivatives_4d(position: Point4<f64>, seed: [u8; 512]) -> (f64, Vector4<f64>) {
+pub fn with_derivatives_4d(position: &Point4<f64>, seed: &[u8; 512]) -> (f64, Vector4<f64>) {
     let mut offsets = [Vector4::zeros(); 5];
 
     // Factor for 4D skewing
@@ -191,7 +191,7 @@ pub fn with_derivatives_4d(position: Point4<f64>, seed: [u8; 512]) -> (f64, Vect
     (n * 62.0, derivatives * 62.0)
 }
 
-pub fn with_derivatives_3d(position: Point3<f64>, seed: [u8; 512]) -> (f64, Vector3<f64>) {
+pub fn with_derivatives_3d(position: &Point3<f64>, seed: &[u8; 512]) -> (f64, Vector3<f64>) {
     let mut offsets = [Vector3::zeros(); 4];
 
     let skew_factor = F3 * position.x + F3 * position.y + F3 * position.z; // Very nice and simple skew factor for 3D
