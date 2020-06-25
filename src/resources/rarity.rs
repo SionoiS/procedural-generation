@@ -4,6 +4,8 @@ use crate::noise::simplex;
 use nalgebra::Point3;
 use nalgebra::{Point4, Vector3};
 
+//TODO use struct for seed data
+
 pub fn get_samples(
     position: &Point3<f64>,
     time: u64,

@@ -1,97 +1,113 @@
-use crate::resources::ResouceType;
+use crate::id_types::{DatabaseId, Resource};
+use crate::modules::ModuleError;
 use std::f64::consts::FRAC_PI_8;
 use std::num::NonZeroU32;
 
-pub fn get_requirements(_properties: &[u8]) -> Vec<(ResouceType, NonZeroU32)> {
-    vec![
-        (ResouceType::Metal, NonZeroU32::new(50).unwrap()),
-        (ResouceType::Crystal, NonZeroU32::new(20).unwrap()),
-    ]
-}
-
 pub struct SensorStats {
-    tier: u8,
-
-    radius_range: f64,
-    radius_resolution: i32,
-
-    longitude_range: f64,
-    longitude_resolution: i32,
-
-    latitude_range: f64,
-    latitude_resolution: i32,
+    properties: [u8; 7],
 }
 
 impl SensorStats {
-    pub fn from_properties(properties: &[u8]) -> Self {
-        Self {
-            tier: properties[0],
-            radius_range: radius_range(properties[1]),
-            radius_resolution: radius_resolution(properties[2]),
-            longitude_range: longitude_range(properties[3]),
-            longitude_resolution: longitude_resolution(properties[4]),
-            latitude_range: latitude_range(properties[5]),
-            latitude_resolution: latitude_resolution(properties[6]),
+    pub fn from_properties(props: &[u8]) -> Result<Self, ModuleError> {
+        let mut stats = Self {
+            properties: [0u8; 7],
+        };
+
+        if props.len() != stats.properties.len() {
+            return Err(ModuleError::PropertiesMismatch);
         }
+
+        stats.properties.copy_from_slice(props);
+
+        Ok(stats)
     }
 
     pub fn get_tier(&self) -> u8 {
-        self.tier
+        self.properties[0]
     }
 
     pub fn get_radius_range(&self) -> f64 {
-        self.radius_range
+        self.properties[1] as f64 * 100.0 //meters
     }
 
     pub fn get_radius_resolution(&self) -> i32 {
-        self.radius_resolution
+        self.properties[2] as i32
     }
 
     pub fn get_longitude_range(&self) -> f64 {
-        self.longitude_range
+        self.properties[3] as f64 * FRAC_PI_8
     }
 
     pub fn get_longitude_resolution(&self) -> i32 {
-        self.longitude_resolution
+        self.properties[4] as i32
     }
 
     pub fn get_latitude_range(&self) -> f64 {
-        self.latitude_range
+        self.properties[5] as f64 * FRAC_PI_8
     }
 
     pub fn get_latitude_resolution(&self) -> i32 {
-        self.latitude_resolution
+        self.properties[6] as i32
+    }
+
+    pub fn get_requirements(&self) -> Vec<(Resource, NonZeroU32)> {
+        vec![
+            self.tier_req(),
+            self.radius_range_req(),
+            self.radius_resolution_req(),
+            self.longitude_range_req(),
+            self.longitude_resolution_req(),
+            self.latitude_range_req(),
+            self.latitude_resolution_req(),
+        ]
+    }
+
+    fn tier_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Metal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[0] as i32 - 1) as u32).unwrap(),
+        )
+    }
+
+    fn radius_range_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Crystal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[1] as i32 - 1) as u32).unwrap(),
+        )
+    }
+
+    fn radius_resolution_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Crystal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[2] as i32 - 1) as u32).unwrap(),
+        )
+    }
+
+    fn longitude_range_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Crystal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[3] as i32 - 1) as u32).unwrap(),
+        )
+    }
+
+    fn longitude_resolution_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Crystal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[4] as i32 - 1) as u32).unwrap(),
+        )
+    }
+
+    fn latitude_range_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Crystal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[5] as i32 - 1) as u32).unwrap(),
+        )
+    }
+
+    fn latitude_resolution_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Crystal(DatabaseId::default()),
+            NonZeroU32::new(10_f64.powi(self.properties[6] as i32 - 1) as u32).unwrap(),
+        )
     }
 }
-
-fn radius_range(level: u8) -> f64 {
-    level as f64 * 100.0 //meters
-}
-
-fn radius_resolution(level: u8) -> i32 {
-    level as i32
-}
-
-fn longitude_range(level: u8) -> f64 {
-    level as f64 * FRAC_PI_8
-}
-
-fn longitude_resolution(level: u8) -> i32 {
-    level as i32
-}
-
-fn latitude_range(level: u8) -> f64 {
-    level as f64 * FRAC_PI_8
-}
-
-fn latitude_resolution(level: u8) -> i32 {
-    level as i32
-}
-
-/*static Dimensionality TemporalDimension(byte level)
-{
-    //seconds
-    var range = level * 86400;// 24 hour 1 day
-    var resolution = level * 3600;// 1 hour
-    return new Dimensionality(range, resolution);
-}*/

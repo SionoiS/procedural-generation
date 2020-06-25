@@ -1,29 +1,38 @@
-use crate::resources::ResouceType;
+use crate::id_types::{DatabaseId, Resource};
+use crate::modules::ModuleError;
 use std::num::NonZeroU32;
 
-pub fn get_requirements(_properties: &[u8]) -> Vec<(ResouceType, NonZeroU32)> {
-    vec![
-        (ResouceType::Metal, NonZeroU32::new(50).unwrap()),
-        (ResouceType::Crystal, NonZeroU32::new(20).unwrap()),
-    ]
-}
-
 pub struct SamplerStats {
-    extraction_rate: i32,
+    properties: [u8; 1],
 }
 
 impl SamplerStats {
-    pub fn from_properties(properties: &[u8]) -> Self {
-        Self {
-            extraction_rate: extraction_rate(properties[0]),
+    pub fn from_properties(props: &[u8]) -> Result<Self, ModuleError> {
+        let mut stats = Self {
+            properties: [0u8; 1],
+        };
+
+        if props.len() != stats.properties.len() {
+            return Err(ModuleError::PropertiesMismatch);
         }
+
+        stats.properties.copy_from_slice(props);
+
+        Ok(stats)
     }
 
     pub fn get_extract_rate(&self) -> i32 {
-        self.extraction_rate
+        (self.properties[0] as i32 + 1) * 10
     }
-}
 
-fn extraction_rate(level: u8) -> i32 {
-    (level + 1) as i32 * 10
+    pub fn get_requirements(&self) -> Vec<(Resource, NonZeroU32)> {
+        vec![self.extraction_rate_req()]
+    }
+
+    fn extraction_rate_req(&self) -> (Resource, NonZeroU32) {
+        (
+            Resource::Metal(DatabaseId::default()),
+            NonZeroU32::new((self.properties[0] as u32 + 1) * 100).unwrap(),
+        )
+    }
 }

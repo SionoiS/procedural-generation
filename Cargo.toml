@@ -8,7 +8,7 @@ edition = "2018"
 
 [lib]
 name="procedural_generation"
-crate-type = ["dylib"]
+crate-type = ["rlib"]
 
 [dependencies]
 rand = "0.7"
